@@ -66,3 +66,35 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+### Mastermind
+Conosci il gioco Master Mind? 
+
+Consiste nel cercare di dedurre per tentativi un codice segreto. 
+
+Ecco qualche indicazione per realizzare il gioco:
+
+·  ad ogni partita bisogna scoprire un codice che consiste in una sequenza di tre cifre nel range 0-9
+
+·  ad ogni turno il giocatore fa un tentativo proponendo una sequenza di tre cifre
+
+·  se la sequenza proposta ad un turno corrisponde al codice segreto allora il giocatore ha vinto
+
+·  altrimenti il giocatore ottiene un indizio che consiste in due numeri: 
+
+o il numero di cifre che egli ha indovinato essere nel codice segreto ma che ha collocato in una posizione errata della sequenza (aka “numero giusto posto sbagliato”)
+
+o il numero di cifre che egli ha indovinato essere nel codice segreto e che sono anche nel posto giusto della sequenza (aka “numero giusto posto giusto”)
+
+·  in qualsiasi momento il giocatore si può arrendere e in quel caso gli viene rivelata la combinazione segreta
+
+Ulteriori sviluppi (facoltativo)
+
+Se hai del tempo da impiegare e vuoi arricchire il programma con altre funzionalità, considera i seguenti desiderata che potrei avere come utente:
+
+·  duello: due giocatori si sfidano, ciascuno stabilisce un codice segreto e cerca di indovinare il codice segreto dell’altro, alternandosi a turno nei tentativi
+
+·  configurazione: potrei voler regolare la difficoltà del gioco stabilendo di quante cifre consiste la sequenza del codice segreto, oppure ampliando o restringendo il numero di simboli ammessi
+
+·  top ten: ad ogni partita il gioco potrebbe darmi un punteggio per la risoluzione, basato sul tempo che ci metto a scoprire una combinazione o sul numero di tentativi che ho a disposizione. Come giocatore vorrei che il programma mi desse la top ten dei giocatori migliori.
