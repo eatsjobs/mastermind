@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Game from './Game';
 import styled from 'styled-components';
+import routes from './routes';
 const Header = styled.header`
   & h1 {
     margin: 0;
@@ -11,6 +11,7 @@ const Header = styled.header`
 
 const Footer = styled.footer`
   font-size: 10px;
+  padding: 10px 0px;
 `;
 
 export const Container = styled.div`
@@ -30,12 +31,9 @@ export class App extends Component {
       <Header>
         <h1>MasterMind!</h1>
       </Header>
-      <Game
-        difficulty={3}
-        maxAttempts={10}
-      />
+      {routes}
       <Footer>
-        made by @eatsjobs
+        <strong>madeBy @eatsjobs</strong>, 2019
       </Footer>
     </Container>)
   }

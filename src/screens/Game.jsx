@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Inputs } from './components';
 import styled from 'styled-components';
-import { checkAttempt, generateSecretCode } from './utils';
+
+import { Inputs } from '../components';
+import { checkAttempt, generateSecretCode } from '../utils';
 
 const GameContainer = styled.div`
   max-width: 700px;
@@ -27,6 +28,10 @@ const Table = styled.table`
 
     & tr td {
 
+    }
+
+    & tfoot tr td {
+        text-align: center;
     }
 `;
 
@@ -55,10 +60,12 @@ const Message = styled.div`
 export default class Game extends Component {
     constructor(props) {
         super(props);
+        const { attempts, difficulty } = this.props.location.state;
+        console.log({attempts, difficulty });
         this.state = {
             currentRow: 0,
-            remainingAttempts: this.props.maxAttempts,
-            currentSecretCode: generateSecretCode({ difficulty: this.props.difficulty })
+            remainingAttempts: attempts,
+            currentSecretCode: generateSecretCode({ difficulty })
         }
     }
     
@@ -89,7 +96,10 @@ export default class Game extends Component {
     }
 
     render() {
-        const { difficulty } = this.props;
+        const { 
+            difficulty, 
+            attempts: maxAttempts 
+        } = this.props.location.state;
         const { currentRow, remainingAttempts, winning } = this.state;
         return (<GameContainer>
             <HeadRow>
@@ -105,12 +115,12 @@ export default class Game extends Component {
                     <th>Attempts</th>
                     <th>
                         Results:
-                        <div style={{ fontSize: '.5rem' }}>Right Number and Place | Wrong Place</div>
+                        <div style={{ fontSize: '.4rem' }}>Right Number and Place | Wrong Place</div>
                     </th>
                 </tr>
             </thead>
             <tbody>
-                {new Array(this.props.maxAttempts).fill(1).map((_, i) => {
+                {new Array(maxAttempts).fill(1).map((_, i) => {
                     return <tr className={currentRow === i ? 'active' : undefined} key={i}>
                         <td style={{ width: '70%' }}>
                             <Inputs
@@ -133,6 +143,20 @@ export default class Game extends Component {
                     </tr>
                 })}
         </tbody>
+        <tfoot>
+            <tr>
+                <td style={{ width: '70%' }}>
+                    <Inputs
+                        length={this.state.currentSecretCode.length}
+                        id='secret'
+                        readOnly={true}
+                    />
+                </td>
+                <td style={{ width: '30%' }}>
+                    <Button>Show Solution</Button>
+                </td>
+            </tr>
+        </tfoot>
         </Table>
     </GameContainer>)
     }

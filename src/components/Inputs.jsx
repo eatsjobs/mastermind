@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 
 const InputsContainer = styled.div`
@@ -37,6 +37,10 @@ export class Inputs extends Component {
     constructor(props) {
         super(props);
         this.values = [];
+    }
+
+    componentDidMount() {
+
     }
 
     onChange = (evt) => {
