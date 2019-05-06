@@ -9,7 +9,8 @@ const InputsContainer = styled.div`
         text-align: center;
         font-family: monospace;
         font-size: 1em;
-        max-width: 100px;
+        max-width: 50px;
+        width: 100%;
         background: transparent;
         outline: none;
         border: none;
@@ -44,6 +45,7 @@ export class Inputs extends Component {
         if (!isNaN(value)) {
             this.values[id] = value;
             if (this[`input${id + 1}`]) {
+                // focus next input if exist
                 this[`input${id + 1}`].focus();
             } else {
                 this.props.onEntered({ values: this.values, id: this.props.id });

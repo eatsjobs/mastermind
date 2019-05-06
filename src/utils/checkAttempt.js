@@ -7,21 +7,19 @@ export function checkAttempt({ attempt, code } = {}) {
     if (attempt.length !== code.length) {
         return false
     }
-
-    let rightNumberWrongPlace = 0;
-    let rightNumberRightPlace = 0;
-    for (let i = 0; i < code.length; i++) {
-        if (code[i] === attempt[i]) {
-            rightNumberRightPlace++;
-        } else {
-            if (attempt.indexOf(code[i]) > -1) {
-                rightNumberWrongPlace++;
-            }
-        }
-    }
-   
+    // TODO: write better?
+    let rightNumbersRightPlace = code.filter((v,i) => v === attempt[i]);
+    let k;
+    let rightNumbersWrongPlace = code.filter((v, j) => {
+        k = attempt.indexOf(v);
+        /** 
+            Is in attempt, is not at the same position, it's not already in the rightNumbersRightPlace array
+        */
+        return k > -1 && k !== j && rightNumbersRightPlace.indexOf(v) === -1;
+    })
+    
     return {
-        rightNumberRightPlace,
-        rightNumberWrongPlace
+        rightNumberRightPlace: rightNumbersRightPlace.length,
+        rightNumberWrongPlace: rightNumbersWrongPlace.length
     }
 }

@@ -9,24 +9,47 @@ const GameContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+  overflow-x: auto;
   
 `;
 
 const Table = styled.table`
     width: 100%;
-    height: 350px;
+    min-height: 350px;
     background: #7c8aa5;
     padding: 1em 0em;
-    & tr {
+    & tbody tr {
         opacity: 0.35;
     }
-    & tr.active {
+    & tbody tr.active {
         opacity: 1;
     }
 
     & tr td {
 
     }
+`;
+
+const HeadRow = styled.div`
+    display: flex; 
+    justify-content: space-between;
+    margin-bottom: 10px;
+`;
+
+const Button = styled.button`
+    border-radius: 3px;
+    padding: 0.5rem 0;
+    width: 11rem;
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+`;
+
+const Message = styled.div`
+    font-size: .8rem;
+    display:flex;
+    align-items: center;
+    justify-content: center;
 `;
 
 export default class Game extends Component {
@@ -57,7 +80,7 @@ export default class Game extends Component {
             [id]: {
                 rightNumberRightPlace,
                 rightNumberWrongPlace,
-                readOnly: false
+                readOnly: true
             },
             remainingAttempts: this.state.remainingAttempts - 1,
             currentRow: this.state.currentRow + 1,
@@ -69,14 +92,21 @@ export default class Game extends Component {
         const { difficulty } = this.props;
         const { currentRow, remainingAttempts, winning } = this.state;
         return (<GameContainer>
-            <div style={{ textAlign: 'left' }}>
-                Remaining Attempts {remainingAttempts}
-            </div>
+            <HeadRow>
+                <Message style={{ textAlign: 'left', fontSize: '.8rem' }}>
+                    Remaining Attempts {remainingAttempts}
+                </Message>
+                <Button onClick={() => {}}>Restart</Button>
+            </HeadRow>
+            
             <Table>
             <thead>
-                <tr className='active'>
+                <tr>
                     <th>Attempts</th>
-                    <th>Results</th>
+                    <th>
+                        Results:
+                        <div style={{ fontSize: '.5rem' }}>Right Number and Place | Wrong Place</div>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -87,7 +117,7 @@ export default class Game extends Component {
                                 length={difficulty}
                                 id={`attempt_${i}`}
                                 onEntered={this.onInputsEnter} 
-                                readOnly={false}
+                                readOnly={currentRow !== i}
                             />
                         </td>
                         <td style={{ width: '30%' }}>
