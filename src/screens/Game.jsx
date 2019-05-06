@@ -61,28 +61,30 @@ export default class Game extends Component {
     constructor(props) {
         super(props);
         const { attempts, difficulty } = this.props.location.state;
-        console.log({attempts, difficulty });
         this.state = {
             currentRow: 0,
             remainingAttempts: attempts,
-            currentSecretCode: generateSecretCode({ difficulty })
+            currentSecretCode: generateSecretCode({ difficulty }),
+            winning: false
         }
+    }
+
+    gotToGameOver = () => {
+        this.props.history.push('/gameover', { 
+            code: this.state.currentSecretCode,
+            winning: this.state.winning
+        });
     }
     
     onInputsEnter = ({ values, id }) => {
         const { currentSecretCode } = this.state;
-        const { difficulty } = this.props;
+        const { difficulty } = this.props.location.state;
         const { rightNumberRightPlace, rightNumberWrongPlace } = checkAttempt({ 
             attempt: values, 
             code: this.state.currentSecretCode
         });
 
-        let winning = false;
-        
-        if (rightNumberRightPlace === difficulty) {
-            winning = true
-        }
-        console.log({ rightNumberRightPlace, rightNumberWrongPlace, currentSecretCode });
+        console.log({ rightNumberRightPlace, rightNumberWrongPlace, currentSecretCode, difficulty },  rightNumberRightPlace === difficulty);
         this.setState({ 
             [id]: {
                 rightNumberRightPlace,
@@ -91,7 +93,11 @@ export default class Game extends Component {
             },
             remainingAttempts: this.state.remainingAttempts - 1,
             currentRow: this.state.currentRow + 1,
-            winning
+            winning: rightNumberRightPlace === difficulty
+        }, () => {
+            if (this.state.winning || this.state.remainingAttempts === 0) {
+                this.gotToGameOver();
+            }
         });
     }
 
@@ -106,16 +112,14 @@ export default class Game extends Component {
                 <Message style={{ textAlign: 'left', fontSize: '.8rem' }}>
                     Remaining Attempts {remainingAttempts}
                 </Message>
-                <Button onClick={() => {}}>Restart</Button>
             </HeadRow>
-            
             <Table>
             <thead>
                 <tr>
                     <th>Attempts</th>
                     <th>
                         Results:
-                        <div style={{ fontSize: '.4rem' }}>Right Number and Place | Wrong Place</div>
+                        <div style={{ fontSize: '.7rem' }}>Right Number and Place | Wrong Place</div>
                     </th>
                 </tr>
             </thead>
@@ -146,14 +150,17 @@ export default class Game extends Component {
         <tfoot>
             <tr>
                 <td style={{ width: '70%' }}>
-                    <Inputs
+                    {/*<Inputs
                         length={this.state.currentSecretCode.length}
                         id='secret'
                         readOnly={true}
-                    />
+                    />*/}
                 </td>
                 <td style={{ width: '30%' }}>
-                    <Button>Show Solution</Button>
+                    <Button 
+                        onClick={this.gotToGameOver}>
+                        Show Solution
+                    </Button>
                 </td>
             </tr>
         </tfoot>

@@ -3,11 +3,12 @@
  * @param {Array} params.attempt - the user input code
  * @param {Array} params.code - the code generate once the game started
  */
-export function checkAttempt({ attempt: input, code: secret } = {}) {
+export function checkAttempt({ attempt, code } = {}) {
+    let input = attempt.slice();
+    let secret = code.slice();
     if (input.length !== secret.length) {
         return false
     }
-
     let whites = 0, blacks = 0;
     // console.log({ input, secret, blacks });
     // blacks: right Number in right place

@@ -47,14 +47,17 @@ export class Inputs extends Component {
         const value = parseInt(evt.target.value);
         const id = parseInt(evt.target.dataset.id);
         if (!isNaN(value)) {
+            console.log({ value });
             this.values[id] = value;
             if (this[`input${id + 1}`]) {
                 // focus next input if exist
                 this[`input${id + 1}`].focus();
             } else {
-                this.props.onEntered({ values: this.values, id: this.props.id });
-                this.values = [];
-                this[`input${id}`].blur();
+                if (this.values.length === this.props.length) {
+                    this.props.onEntered({ values: this.values, id: this.props.id });
+                    this.values = [];
+                    this[`input${id}`].blur();
+                }
             }
         }
     }
@@ -64,6 +67,7 @@ export class Inputs extends Component {
         return <InputsContainer>
             {new Array(this.props.length).fill(1).map((v, i) => {
                 return <input
+                    autoComplete='off'
                     aria-label={`attempt_${i}`}
                     data-id={i}
                     key={i}
@@ -71,8 +75,9 @@ export class Inputs extends Component {
                     onChange={this.onChange}
                     readOnly={readOnly}
                     ref={(node) => this[`input${i}`] = node}
-                    type='text'
-                    maxLength={1}
+                    type='number'
+                    min={0}
+                    max={9}
                 />
             })}
         </InputsContainer>
