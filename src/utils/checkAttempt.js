@@ -3,23 +3,37 @@
  * @param {Array} params.attempt - the user input code
  * @param {Array} params.code - the code generate once the game started
  */
-export function checkAttempt({ attempt, code } = {}) {
-    if (attempt.length !== code.length) {
+export function checkAttempt({ attempt: input, code: secret } = {}) {
+    if (input.length !== secret.length) {
         return false
     }
-    // TODO: write better?
-    let rightNumbersRightPlace = code.filter((v,i) => v === attempt[i]);
-    let k;
-    let rightNumbersWrongPlace = code.filter((v, j) => {
-        k = attempt.indexOf(v);
-        /** 
-            Is in attempt, is not at the same position, it's not already in the rightNumbersRightPlace array
-        */
-        return k > -1 && k !== j && rightNumbersRightPlace.indexOf(v) === -1;
-    })
+
+    let whites = 0, blacks = 0;
+    // console.log({ input, secret, blacks });
+    // blacks: right Number in right place
+    // whites: right number in wrong place
+    for (let i = secret.length -1; i >= 0; i--) {
+        if (input[i] === secret[i]) {
+            blacks++;
+            input.splice(i, 1);
+            secret.splice(i, 1);
+        }
+    }
+
+    //console.log({ input, secret, blacks });
+
+    for (let j = input.length -1; j >= 0; j--) {
+        for (let k = secret.length - 1; k >= 0; k--) {
+            if (input[j] === secret[k]) {
+                whites++;
+                secret.splice(k, 1);
+            }
+        }
+    }
+    //console.log({ input, secret, whites });
     
     return {
-        rightNumberRightPlace: rightNumbersRightPlace.length,
-        rightNumberWrongPlace: rightNumbersWrongPlace.length
+        rightNumberRightPlace: blacks,
+        rightNumberWrongPlace: whites
     }
 }

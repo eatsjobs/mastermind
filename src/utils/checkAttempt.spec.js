@@ -13,7 +13,10 @@ test('checkAttempt with two empty array', () => {
 });
 
 test('checkAttempt win', () => {
-    const { rightNumberRightPlace, rightNumberWrongPlace } = checkAttempt({ attempt: [1,2,3], code: [1,2,3] });
+    const { 
+        rightNumberRightPlace, 
+        rightNumberWrongPlace
+    } = checkAttempt({ attempt: [ 1, 2, 3 ], code: [ 1, 2, 3 ] });
     expect(rightNumberRightPlace).toBe(3);
     expect(rightNumberWrongPlace).toBe(0);
 });
@@ -76,4 +79,10 @@ test('checkAttempt with 123 with code 222', () => {
     const { rightNumberRightPlace, rightNumberWrongPlace } = checkAttempt({ attempt: [ 1,2,3 ], code: [ 2,2,2 ] });
     expect(rightNumberRightPlace).toBe(1);
     expect(rightNumberWrongPlace).toBe(0);
+});
+
+test('checkAttempt code: 5215, attempt: 5553 should be 1,1', () => {
+    const { rightNumberRightPlace, rightNumberWrongPlace } = checkAttempt({ attempt: [ 5, 5, 5, 3 ], code: [ 5, 2, 1, 5 ] });
+    expect(rightNumberRightPlace).toBe(1);
+    expect(rightNumberWrongPlace).toBe(1);
 });
