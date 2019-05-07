@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-const InputsContainer = styled.div`
+const InputsContainer = styled.form`
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -28,50 +28,67 @@ const InputsContainer = styled.div`
         pointer-events: none;
     }
 `
-
 export class Inputs extends Component {
     static defaultProps = {
         readOnly: false,
-        length: 3
+        initialValues: [],
+        focus: false
     }
     constructor(props) {
         super(props);
-        this.values = [];
+        this.state = {
+            values: this.props.initialValues
+        }
     }
 
     componentDidMount() {
-
+        if (this.props.focus) {
+            this[`input0`].focus();
+        }
     }
 
     onChange = (evt) => {
-        const value = parseInt(evt.target.value);
+        console.log('change', evt);
         const id = parseInt(evt.target.dataset.id);
-        if (!isNaN(value)) {
-            console.log({ value });
-            this.values[id] = value;
-            if (this[`input${id + 1}`]) {
-                // focus next input if exist
-                this[`input${id + 1}`].focus();
+        let newValues = [
+            ...this.state.values
+        ];
+        
+        if (evt.target.value.length < 2) {
+            newValues[id] = evt.target.value;
+            this.setState({ values: newValues });
+        }    
+    }
+    
+    onSubmit = (evt) => {
+        evt.preventDefault();
+        const values = this.state.values.map((v) => parseInt(v, 10));
+        this.props.onEntered({ values, id: this.props.id });
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.focus !== this.props.focus) {
+            if (this.props.focus) {
+                this[`input0`].focus();
             } else {
-                if (this.values.length === this.props.length) {
-                    this.props.onEntered({ values: this.values, id: this.props.id });
-                    this.values = [];
-                    this[`input${id}`].blur();
-                }
+                this[`input0`].blur();
             }
         }
     }
 
     render() {
         const { readOnly } = this.props;
-        return <InputsContainer>
-            {new Array(this.props.length).fill(1).map((v, i) => {
+        const { values } = this.state;
+        return <InputsContainer
+            onSubmit={this.onSubmit}>
+            {values.map((v, i) => {
                 return <input
                     autoComplete='off'
-                    aria-label={`attempt_${i}`}
+                    aria-label={`input_${i}`}
                     data-id={i}
                     key={i}
-                    name={`attempt_${i}`}
+                    value={v}
+                    name={`input_${i}`}
                     onChange={this.onChange}
                     readOnly={readOnly}
                     ref={(node) => this[`input${i}`] = node}
@@ -80,6 +97,7 @@ export class Inputs extends Component {
                     max={9}
                 />
             })}
+            <button type='submit'>check</button>
         </InputsContainer>
     }
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-import { Inputs } from '../components';
+import { Inputs, Button } from '../components';
 import { checkAttempt, generateSecretCode } from '../utils';
 
 const GameContainer = styled.div`
@@ -41,15 +41,6 @@ const HeadRow = styled.div`
     margin-bottom: 10px;
 `;
 
-const Button = styled.button`
-    border-radius: 3px;
-    padding: 0.5rem 0;
-    width: 11rem;
-    background: transparent;
-    color: white;
-    border: 2px solid white;
-`;
-
 const Message = styled.div`
     font-size: .8rem;
     display:flex;
@@ -85,7 +76,7 @@ export default class Game extends Component {
         });
 
         console.log({ rightNumberRightPlace, rightNumberWrongPlace, currentSecretCode, difficulty },  rightNumberRightPlace === difficulty);
-        this.setState({ 
+        this.setState({
             [id]: {
                 rightNumberRightPlace,
                 rightNumberWrongPlace,
@@ -128,7 +119,8 @@ export default class Game extends Component {
                     return <tr className={currentRow === i ? 'active' : undefined} key={i}>
                         <td style={{ width: '70%' }}>
                             <Inputs
-                                length={difficulty}
+                                focus={currentRow === i}
+                                initialValues={new Array(difficulty).fill(0)}
                                 id={`attempt_${i}`}
                                 onEntered={this.onInputsEnter} 
                                 readOnly={currentRow !== i}
