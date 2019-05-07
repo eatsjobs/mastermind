@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { Inputs, Button } from '../components';
 import { checkAttempt, generateSecretCode } from '../utils';
+import { observer, inject } from 'mobx-react';
 
 const GameContainer = styled.div`
   max-width: 700px;
@@ -48,7 +49,7 @@ const Message = styled.div`
     justify-content: center;
 `;
 
-export default class Game extends Component {
+class Game extends Component {
     constructor(props) {
         super(props);
         const { attempts, difficulty } = this.props.location.state;
@@ -160,3 +161,5 @@ export default class Game extends Component {
     </GameContainer>)
     }
 }
+
+export default inject('gameState')(observer(Game));

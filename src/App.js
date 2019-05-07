@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import routes from './routes';
+import { Provider } from 'mobx-react';
+import { GameStore } from './stores';
 const Header = styled.header`
   & h1 {
     margin: 0;
@@ -24,18 +26,22 @@ export const Container = styled.div`
     color: white;
     height: 100%;
 `;
-
+const gameStore = new GameStore();
 export class App extends Component {
   render() {
-    return (<Container>
-      <Header>
-        <h1>MasterMind!</h1>
-      </Header>
-      {routes}
-      <Footer>
-        <strong>madeBy @eatsjobs</strong>, 2019
-      </Footer>
-    </Container>)
+    return (
+      <Provider gameStore={gameStore}>
+        <Container>
+          <Header>
+            <h1>MasterMind!</h1>
+          </Header>
+          {routes}
+          <Footer>
+            <strong>madeBy @eatsjobs</strong>, 2019
+          </Footer>
+        </Container>
+      </Provider>
+    )
   }
 }
 
