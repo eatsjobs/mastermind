@@ -1,6 +1,29 @@
 import React, { Component } from 'react';
-import { Link } from "react-router-dom";
-export default class Home extends Component {
+import { Link } from 'react-router-dom';
+import { observer, inject } from 'mobx-react';
+import styled from 'styled-components';
+import { Button } from '../components';
+
+const InputContainer = styled.div`
+  display: flex;
+  
+  & label {
+    flex: 1;
+  }
+  & input {
+    flex: 1;
+    margin-left: 5px;
+  }
+`;
+
+const ButtonContainer = styled.div`
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,10 +39,18 @@ export default class Home extends Component {
     });
   }
 
+  startGame = () => {
+    // TODO: Remove this state and took the one in gameStore
+    this.props.history.push('/play', { 
+      difficulty: parseInt(this.state.difficulty),
+      attempts: parseInt(this.state.attempts)
+    });
+  }
+
   render() {
     const { difficulty, attempts } = this.state;
     return <div>
-      <div>
+      <InputContainer>
         <label htmlFor='difficulty'>
           Difficulty:
         </label>
@@ -30,8 +61,8 @@ export default class Home extends Component {
           name='difficulty'
           onChange={this.onChange}
         />
-      </div>
-      <div>
+      </InputContainer>
+      <InputContainer>
         <label htmlFor='attempts'>
           Max attempts:
         </label>
@@ -42,16 +73,14 @@ export default class Home extends Component {
           name='attempts'
           onChange={this.onChange}
         />
-      </div>
-      <div>
-        <Link to={{
-          pathname: '/play',
-          state: {
-            difficulty: parseInt(this.state.difficulty),
-            attempts: parseInt(this.state.attempts)
-          }
-        }}>Start</Link>
-      </div>
+      </InputContainer>
+      <ButtonContainer>
+        <Button onClick={this.startGame}>
+          Start
+        </Button>
+      </ButtonContainer>
     </div>
   }
 }
+
+export default inject('gameStore')(observer(Home));

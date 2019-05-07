@@ -162,4 +162,4 @@ class Game extends Component {
     }
 }
 
-export default inject('gameState')(observer(Game));
+export default inject('gameStore')(observer(Game));
