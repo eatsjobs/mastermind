@@ -22,7 +22,6 @@ export function checkAttempt({ attempt, code } = {}) {
     }
 
     //console.log({ input, secret, blacks });
-
     for (let j = input.length -1; j >= 0; j--) {
         for (let k = secret.length - 1; k >= 0; k--) {
             if (input[j] === secret[k]) {
