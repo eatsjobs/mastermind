@@ -21,13 +21,17 @@ const InputsContainer = styled.form`
     & input:focus {
         border-bottom: 1px solid green;
     }
-    & input:read-only {
+    & input:read-only, & input:disabled {
         background: gray;
     }
     & input[readonly] {
         pointer-events: none;
     }
-`
+`;
+
+const regex = /[0-9]{0,1}/g;
+const BACK_SPACE = 8;
+const ENTER = 13;
 export class Inputs extends Component {
     static defaultProps = {
         readOnly: false,
@@ -36,8 +40,10 @@ export class Inputs extends Component {
     }
     constructor(props) {
         super(props);
+        this.refSubmitButton = React.createRef();
         this.state = {
-            values: this.props.initialValues
+            values: this.props.initialValues,
+            isRowValid: false
         }
     }
 
@@ -48,16 +54,39 @@ export class Inputs extends Component {
     }
 
     onChange = (evt) => {
-        console.log('change', evt);
-        const id = parseInt(evt.target.dataset.id);
-        let newValues = [
-            ...this.state.values
-        ];
-        
-        if (evt.target.value.length < 2) {
-            newValues[id] = evt.target.value;
-            this.setState({ values: newValues });
-        }    
+        evt.persist();
+        const index = parseInt(evt.target.dataset.id);
+        const { value } = evt.target;
+        let newValues = [ ...this.state.values ];
+        newValues[index] = value;
+        const isRowValid = newValues.every((v) => {
+            if (typeof v !== 'undefined' && v !== '') {
+                return regex.test(v);
+            } else {
+                return false;
+            }
+        });
+        console.log({ newValues, value });
+        this.setState({ 
+            values: newValues, 
+            isRowValid
+        });
+    }
+
+    onKeyUp = (evt) => {
+        const index = parseInt(evt.target.dataset.id);
+        const code = evt.keyCode || evt.which;
+        console.log({ code, index });
+        if (code === BACK_SPACE) {
+            this[`input${index - 1}`] && this[`input${index - 1}`].focus();
+        } else if (code !== ENTER) {
+            console.log({ code });
+            if (this[`input${index + 1}`]) {
+                this[`input${index + 1}`].focus();
+            } else {
+                this.refSubmitButton.current.focus();
+            }
+        }
     }
     
     onSubmit = (evt) => {
@@ -78,26 +107,27 @@ export class Inputs extends Component {
 
     render() {
         const { readOnly } = this.props;
-        const { values } = this.state;
+        const { values, isRowValid } = this.state;
         return <InputsContainer
-            onSubmit={this.onSubmit}>
-            {values.map((v, i) => {
+            onSubmit={this.onSubmit}
+        >
+            {values.map((value, i) => {
                 return <input
                     autoComplete='off'
                     aria-label={`input_${i}`}
                     data-id={i}
                     key={i}
-                    value={v}
+                    value={value}
                     name={`input_${i}`}
+                    onKeyUp={this.onKeyUp}
                     onChange={this.onChange}
-                    readOnly={readOnly}
+                    disabled={readOnly}
                     ref={(node) => this[`input${i}`] = node}
-                    type='number'
-                    min={0}
-                    max={9}
+                    type='text'
+                    maxLength={1}
                 />
             })}
-            <button type='submit'>check</button>
+            <button ref={this.refSubmitButton} type='submit' disabled={!isRowValid}>CheckRow</button>
         </InputsContainer>
     }
 }

@@ -121,7 +121,7 @@ class Game extends Component {
                         <td style={{ width: '70%' }}>
                             <Inputs
                                 focus={currentRow === i}
-                                initialValues={new Array(difficulty).fill(0)}
+                                initialValues={new Array(difficulty).fill('')}
                                 id={`attempt_${i}`}
                                 onEntered={this.onInputsEnter} 
                                 readOnly={currentRow !== i}
