@@ -66,7 +66,6 @@ export class Inputs extends Component {
                 return false;
             }
         });
-        console.log({ newValues, value });
         this.setState({ 
             values: newValues, 
             isRowValid
@@ -106,7 +105,7 @@ export class Inputs extends Component {
     }
 
     render() {
-        const { readOnly } = this.props;
+        const { disabled, played } = this.props;
         const { values, isRowValid } = this.state;
         return <InputsContainer
             onSubmit={this.onSubmit}
@@ -121,13 +120,13 @@ export class Inputs extends Component {
                     name={`input_${i}`}
                     onKeyUp={this.onKeyUp}
                     onChange={this.onChange}
-                    disabled={readOnly}
+                    disabled={disabled}
                     ref={(node) => this[`input${i}`] = node}
                     type='text'
                     maxLength={1}
                 />
             })}
-            <button ref={this.refSubmitButton} type='submit' disabled={!isRowValid}>CheckRow</button>
+            <button ref={this.refSubmitButton} type='submit' disabled={played || !isRowValid}>CheckRow</button>
         </InputsContainer>
     }
 }

@@ -6,7 +6,7 @@ import { Button } from '../components';
 
 const InputContainer = styled.div`
   display: flex;
-  
+  margin-bottom: 5px;
   & label {
     flex: 1;
   }
@@ -24,31 +24,28 @@ const ButtonContainer = styled.div`
 `;
 
 class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      difficulty: 3,
-      attempts: 10
+
+  onChange = (evt) => {
+    const { gameStore } = this.props;
+    const { name, value } = evt.target;
+    if (name === 'attempts') {
+      gameStore.maxAttempts = parseInt(value, 10);
+    } else if(name === 'difficulty') {
+      gameStore.difficulty = parseInt(value, 10);
+    } else if (name === 'player') {
+      gameStore.setPlayerName({ name: value });
     }
   }
 
-  onChange = (evt) => {
-    this.setState({ 
-      [evt.target.name]: 
-      evt.target.value
-    });
-  }
-
   startGame = () => {
-    // TODO: Remove this state and took the one in gameStore
-    this.props.history.push('/play', { 
-      difficulty: parseInt(this.state.difficulty),
-      attempts: parseInt(this.state.attempts)
-    });
+    const { gameStore } = this.props;
+    gameStore.start();
+    this.props.history.push('/play');
   }
 
   render() {
-    const { difficulty, attempts } = this.state;
+    const { gameStore } = this.props;
+    console.log({ gameStore });
     return <div>
       <InputContainer>
         <label htmlFor='difficulty'>
@@ -57,7 +54,7 @@ class Home extends Component {
         <input
           type='number'
           min={3}
-          value={difficulty}
+          value={gameStore.difficulty}
           name='difficulty'
           onChange={this.onChange}
         />
@@ -68,9 +65,20 @@ class Home extends Component {
         </label>
         <input
           type='number'
-          value={attempts}
+          value={gameStore.maxAttempts}
           min={3}
           name='attempts'
+          onChange={this.onChange}
+        />
+      </InputContainer>
+      <InputContainer>
+        <label htmlFor='attempts'>
+          PlayerName:
+        </label>
+        <input
+          type='text'
+          name='player'
+          value={gameStore.currentPlayer}
           onChange={this.onChange}
         />
       </InputContainer>

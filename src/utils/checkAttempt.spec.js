@@ -86,3 +86,9 @@ test('checkAttempt code: 5215, attempt: 5553 should be 1,1', () => {
     expect(rightNumberRightPlace).toBe(1);
     expect(rightNumberWrongPlace).toBe(1);
 });
+
+test('checkAttempt code: 787, attempt: 078 should be 0,2', () => {
+    const { rightNumberRightPlace, rightNumberWrongPlace } = checkAttempt({ attempt: [ 0,7,8 ], code: [ 7,8,7 ] });
+    expect(rightNumberRightPlace).toBe(0);
+    expect(rightNumberWrongPlace).toBe(2);
+});

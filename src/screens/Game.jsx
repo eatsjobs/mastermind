@@ -25,6 +25,12 @@ const Table = styled.table`
     }
     & tbody tr.active {
         opacity: 1;
+        & td:first-child {
+            width: 70%;
+        }
+        & td:last-child {
+            width: 30%;
+        }
     }
 
     & tr td {
@@ -47,61 +53,31 @@ const Message = styled.div`
     display:flex;
     align-items: center;
     justify-content: center;
+    text-align: left;
+    font-size: .8rem;
 `;
 
 class Game extends Component {
-    constructor(props) {
-        super(props);
-        const { attempts, difficulty } = this.props.location.state;
-        this.state = {
-            currentRow: 0,
-            remainingAttempts: attempts,
-            currentSecretCode: generateSecretCode({ difficulty }),
-            winning: false
+
+    gotToGameOver = () => {
+        this.props.history.push('/gameover');
+    }
+
+    onInputsEnter = ({ values, id }) => {
+        console.log('onInputs',{ values, id });
+        const { gameStore } = this.props;
+        gameStore.playAttempt({ values });
+        if (gameStore.hasFinished) {
+            this.gotToGameOver();
         }
     }
 
-    gotToGameOver = () => {
-        this.props.history.push('/gameover', { 
-            code: this.state.currentSecretCode,
-            winning: this.state.winning
-        });
-    }
-    
-    onInputsEnter = ({ values, id }) => {
-        const { currentSecretCode } = this.state;
-        const { difficulty } = this.props.location.state;
-        const { rightNumberRightPlace, rightNumberWrongPlace } = checkAttempt({ 
-            attempt: values, 
-            code: this.state.currentSecretCode
-        });
-
-        console.log({ rightNumberRightPlace, rightNumberWrongPlace, currentSecretCode, difficulty },  rightNumberRightPlace === difficulty);
-        this.setState({
-            [id]: {
-                rightNumberRightPlace,
-                rightNumberWrongPlace,
-                readOnly: true
-            },
-            remainingAttempts: this.state.remainingAttempts - 1,
-            currentRow: this.state.currentRow + 1,
-            winning: rightNumberRightPlace === difficulty
-        }, () => {
-            if (this.state.winning || this.state.remainingAttempts === 0) {
-                this.gotToGameOver();
-            }
-        });
-    }
-
     render() {
-        const { 
-            difficulty, 
-            attempts: maxAttempts 
-        } = this.props.location.state;
-        const { currentRow, remainingAttempts, winning } = this.state;
+        const { gameStore } = this.props;
+        const { currentRow, remainingAttempts, attempts } = gameStore;
         return (<GameContainer>
             <HeadRow>
-                <Message style={{ textAlign: 'left', fontSize: '.8rem' }}>
+                <Message>
                     Remaining Attempts {remainingAttempts}
                 </Message>
             </HeadRow>
@@ -116,24 +92,25 @@ class Game extends Component {
                 </tr>
             </thead>
             <tbody>
-                {new Array(maxAttempts).fill(1).map((_, i) => {
+                {attempts.map((_, i) => {
                     return <tr className={currentRow === i ? 'active' : undefined} key={i}>
-                        <td style={{ width: '70%' }}>
+                        <td>
                             <Inputs
                                 focus={currentRow === i}
-                                initialValues={new Array(difficulty).fill('')}
-                                id={`attempt_${i}`}
+                                initialValues={attempts[i].values}
+                                id={i}
                                 onEntered={this.onInputsEnter} 
-                                readOnly={currentRow !== i}
+                                disabled={currentRow !== i}
+                                played={attempts[i].played}
                             />
                         </td>
-                        <td style={{ width: '30%' }}>
+                        <td>
                             <div style={{ display: 'flex' }}>
                                 <span style={{ flex: 1, textAlign: 'center' }}>
-                                    {this.state[`attempt_${i}`] ? this.state[`attempt_${i}`].rightNumberRightPlace : 0}
+                                    {attempts[i].whites}
                                 </span>
                                 <span style={{ flex: 1, textAlign: 'center' }}>
-                                    {this.state[`attempt_${i}`] ? this.state[`attempt_${i}`].rightNumberWrongPlace : 0}
+                                    {attempts[i].blacks}
                                 </span>
                             </div>
                         </td>
