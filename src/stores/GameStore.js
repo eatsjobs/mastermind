@@ -1,6 +1,11 @@
-import { generateSecretCode, checkAttempt } from '../utils';
+import { 
+  generateSecretCode,
+  checkAttempt,
+  calculateScore
+} from '../utils';
 import { observable, computed, action, decorate } from 'mobx';
 import LeaderBoard from './LeaderBoard';
+
 class Attempt {
   constructor(difficulty) {
     this.values = new Array(difficulty).fill('');
@@ -27,9 +32,10 @@ function createInitialAttempts({ maxAttempts, difficulty }) {
 export default class GameStore {
   constructor() {
     this.currentRow = 0;
-    this.difficulty = 3;
-    this.maxAttempts = 10;
+    this.difficulty = 4;
+    this.maxAttempts = 15;
     this.hasWon = false;
+    this.hasStarted = false;
     this.hasFinished = false;
     this.score = 0;
     this.currentPlayer = 'Anonymous';
@@ -61,13 +67,14 @@ export default class GameStore {
     this.attempts[this.currentRow] = attempt;
     if (attempt.whites === this.difficulty) {
         this.hasFinished = true;
+        this.hasStarted = false;
         this.hasWon = true;
-        this.endDateTime = new Date();
-        // TODO: calculate score
+        this.endDateTime = new Date();        
         LeaderBoard.addScore(this.currentPlayer, this.serialize());
         return;
     }
     if (this.remainingAttempts === 0) {
+      this.hasStarted = false;
       this.hasFinished = true;
       return;
     }
@@ -86,6 +93,7 @@ export default class GameStore {
     this.currentRow = 0;
     this.hasWon = false;
     this.hasFinished = false;
+    this.hasStarted = true;
     this.score = 0;
     const now = new Date();
     this.startDateTime = now;
@@ -94,18 +102,21 @@ export default class GameStore {
 
   reset = () => {
     this.currentSecretCode = [];
-    this.difficulty = 3;
-    this.maxAttempts = 10;
+    this.difficulty = 4;
+    this.maxAttempts = 15;
     this.attempts = [];
     this.currentRow = 0;
     this.score = 0;
     this.hasWon = false;
     this.hasFinished = false;
+    this.hasStarted = false;
     this.currentPlayer = 'Anonymous';
   }
 
   serialize = () => {
-    return {
+    
+    const game = {
+      moves: this.currentRow,
       difficulty: this.difficulty,
       hasWon: this.hasWon,
       duration: this.endDateTime - this.startDateTime,
@@ -113,7 +124,9 @@ export default class GameStore {
       startDateTime: this.startDateTime,
       endDateTime: this.endDateTime,
       score: this.score
-    }
+    };
+    game.score = calculateScore(game);
+    return game;
   }
 }
 

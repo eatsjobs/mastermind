@@ -1,4 +1,4 @@
-import { checkAttempt } from './checkAttempt';
+import { check as checkAttempt } from './checkAttempt';
 
 test('checkAttempt with two array with different length', () => {
     const result = checkAttempt({ attempt: [1,2,3,4], code: [1,2,3] });

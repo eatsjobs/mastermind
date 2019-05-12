@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+//import { Platform } from '../utils';
+import { Button } from './';
 
-const InputsContainer = styled.form`
+const FormContainer = styled.form`
     display: flex;
     flex-direction: row;
     justify-content: center;
     & input {
+        color: white;
         text-align: center;
         font-family: monospace;
         font-size: 1em;
@@ -14,12 +17,20 @@ const InputsContainer = styled.form`
         background: transparent;
         outline: none;
         border: none;
-        border-bottom: 1px solid black;
+        border-bottom: 1px solid rgb(200,200,200);
         margin: 0px 1.5px
+    }
+    & input::-webkit-outer-spin-button, & input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    & input[type='number'] {
+        -moz-appearance: textfield;
     }
     
     & input:focus {
-        border-bottom: 1px solid green;
+        border-bottom: 1px solid rgb(255,255,255);
     }
     & input:read-only, & input:disabled {
         background: gray;
@@ -29,9 +40,8 @@ const InputsContainer = styled.form`
     }
 `;
 
-const regex = /[0-9]{0,1}/g;
-const BACK_SPACE = 8;
-const ENTER = 13;
+const BACK_SPACE = 'Backspace';
+//const ENTER = 'Enter';
 export class Inputs extends Component {
     static defaultProps = {
         readOnly: false,
@@ -52,18 +62,44 @@ export class Inputs extends Component {
             this[`input0`].focus();
         }
     }
+    
+    _validate = (value, min, max) => {
+        if (isNaN(value)) {
+            return false;
+        }
+        const _value = Number(value);
+        const _max = Number(max);
+        const _min = Number(min);
+        if (_value >= _min && _value <= _max) {
+            return true;
+        }
+        return false;
+    }
 
     onChange = (evt) => {
         evt.persist();
-        const index = parseInt(evt.target.dataset.id);
-        const { value } = evt.target;
-        let newValues = [ ...this.state.values ];
+        const { 
+            dataset,
+            value, 
+            min,
+            max
+        } = evt.target;
+        if (!this._validate(value, min, max)) {
+            return false;
+        }
+        
+        console.log({ name: 'onChange', evt, value, min, max, dataset });
+        const index = parseInt(dataset.id);
+        let newValues = [ 
+            ...this.state.values
+        ];
+
         newValues[index] = value;
         const isRowValid = newValues.every((v) => {
-            if (typeof v !== 'undefined' && v !== '') {
-                return regex.test(v);
-            } else {
+            if (typeof v === 'undefined' || v === '') {
                 return false;
+            } else {
+                return this._validate(v, min, max);
             }
         });
         this.setState({ 
@@ -73,17 +109,20 @@ export class Inputs extends Component {
     }
 
     onKeyUp = (evt) => {
-        const index = parseInt(evt.target.dataset.id);
-        const code = evt.keyCode || evt.which;
-        console.log({ code, index });
-        if (code === BACK_SPACE) {
-            this[`input${index - 1}`] && this[`input${index - 1}`].focus();
-        } else if (code !== ENTER) {
-            console.log({ code });
+        evt.preventDefault();
+        const { dataset } = evt.target;
+        const { charCode, key } = evt;
+        const index = parseInt(dataset.id);
+        console.log({ name: 'onKeyUp', evt, charCode, key });
+        if (key === BACK_SPACE) {
+            if (this[`input${index - 1}`]) {
+                this[`input${index - 1}`].focus()
+            } 
+        } else if (!isNaN(key)) { //number pressed? give focus to the next if
             if (this[`input${index + 1}`]) {
                 this[`input${index + 1}`].focus();
             } else {
-                this.refSubmitButton.current.focus();
+                // this.refSubmitButton.current.focus();
             }
         }
     }
@@ -107,11 +146,13 @@ export class Inputs extends Component {
     render() {
         const { disabled, played } = this.props;
         const { values, isRowValid } = this.state;
-        return <InputsContainer
+        return <FormContainer
+            autoComplete='off'
             onSubmit={this.onSubmit}
         >
             {values.map((value, i) => {
                 return <input
+                    onFocus={this.onFocus}
                     autoComplete='off'
                     aria-label={`input_${i}`}
                     data-id={i}
@@ -122,11 +163,12 @@ export class Inputs extends Component {
                     onChange={this.onChange}
                     disabled={disabled}
                     ref={(node) => this[`input${i}`] = node}
-                    type='text'
-                    maxLength={1}
+                    type='number'
+                    min='0'
+                    max='9'
                 />
             })}
-            <button ref={this.refSubmitButton} type='submit' disabled={played || !isRowValid}>CheckRow</button>
-        </InputsContainer>
+            <Button size='s' ref={this.refSubmitButton} type='submit' disabled={played || !isRowValid}>CheckRow</Button>
+        </FormContainer>
     }
 }

@@ -1,3 +1,3 @@
 export { Inputs } from './Inputs';
-export { default as Input } from './Input';
+//export { default as Input } from './Input';
 export { default as Button } from './Button';

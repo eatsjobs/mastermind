@@ -7,15 +7,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
 }
 
-body > #root > div {
+html, body, body #root {
   height: 100vh;
-}
-
-html {
-  min-height: 100%;
 }
 
 code {

@@ -5,7 +5,7 @@ const Header = styled.header`
   & h1 {
     margin: 0;
     padding: 0;
-    font-family: monospace
+    font-family: monospace;
   }
 `;
 
@@ -14,20 +14,21 @@ const Footer = styled.footer`
   padding: 10px 0px;
 `;
 
-export const Container = styled.div`
+export const Page = styled.div`
     background-color: #282c34;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+    height: 100%;
+    overflow: hidden auto;
     font-size: calc(10px + 2vmin);
     color: white;
-    height: 100%;
 `;
 export class App extends Component {
   render() {
     return (
-        <Container>
+        <Page>
           <Header>
             <h1>MasterMind!</h1>
           </Header>
@@ -35,7 +36,7 @@ export class App extends Component {
           <Footer>
             <strong>madeBy @eatsjobs</strong>, 2019
           </Footer>
-        </Container>
+        </Page>
     )
   }
 }

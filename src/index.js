@@ -4,10 +4,10 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from 'mobx-react';
-import { GameStore } from './stores';
+import { GameStore, LeaderBoardStore } from './stores';
 const gameStore = new GameStore();
 render(
-    <Provider gameStore={gameStore}>
+    <Provider gameStore={gameStore} leaderBoardStore={LeaderBoardStore}>
         <App />
     </Provider>, document.getElementById('root'));
 

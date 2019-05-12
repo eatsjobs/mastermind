@@ -2,34 +2,30 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 import { Inputs, Button } from '../components';
-import { checkAttempt, generateSecretCode } from '../utils';
 import { observer, inject } from 'mobx-react';
 
 const GameContainer = styled.div`
   max-width: 700px;
-  min-height: 500px;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow-x: auto;
-  
 `;
 
 const Table = styled.table`
     width: 100%;
     min-height: 350px;
-    background: #7c8aa5;
-    padding: 1em 0em;
+    background: rgba(255,255,255, 0.3);
+    padding: 1rem 2rem;
+    border-radius: 10px;
+
     & tbody tr {
         opacity: 0.35;
     }
     & tbody tr.active {
         opacity: 1;
         & td:first-child {
-            width: 70%;
+            width: 80%;
         }
         & td:last-child {
-            width: 30%;
+            width: 20%;
         }
     }
 
@@ -59,6 +55,13 @@ const Message = styled.div`
 
 class Game extends Component {
 
+    componentDidMount() {
+        const { gameStore } = this.props;
+        if (!gameStore.hasStarted) {
+            this.props.history.push('/');
+        }
+    }
+
     gotToGameOver = () => {
         this.props.history.push('/gameover');
     }
@@ -86,7 +89,7 @@ class Game extends Component {
                 <tr>
                     <th>Attempts</th>
                     <th>
-                        Results:
+                        <div>Results:</div>
                         <div style={{ fontSize: '.7rem' }}>Right Number and Place | Wrong Place</div>
                     </th>
                 </tr>
